@@ -118,50 +118,52 @@ class MyCalendar extends HTMLElement {
         this.shadowRoot.innerHTML = `
             <link rel="stylesheet" href="style.css">
 
-            <!-- ➀日付入力部分 -->
-            <div class="date-picker">
-                <input type="number" id="input-year" value="${this.year}">年
-                <input type="number" id="input-month" value="${this.month}">月
-                <input type="number" id="input-day" value="${this.day}">日
-                <button id="calendarBtn" onClick="this.getRootNode().host.shadowRoot.querySelector('#calendar').classList.add('show')">📅</button>
-            </div>
-
-            <!-- ➁カレンダー部分 -->
-            <div id="calendar" class="modal">
-
-                <!-- ヘッダー -->
-                <div class="calendar-header">
-                    <button id="closeModal" class="close" onClick="this.getRootNode().host.shadowRoot.querySelector('#calendar').classList.remove('show')">×</button>
-                    <button id="prev-year" onClick="this.getRootNode().host.changeYear(-1)"> < </button>
-                    <span id="current-year">${this.year}</span>
-                    <button id="next-year" onClick="this.getRootNode().host.changeYear(1)"> > </button>
-                    <button id="checkModal" class="check">✔</button>
+            <div id="app-container">
+                <!-- ➀日付入力部分 -->
+                <div class="date-picker">
+                    <input type="number" id="input-year" value="${this.year}">年
+                    <input type="number" id="input-month" value="${this.month}">月
+                    <input type="number" id="input-day" value="${this.day}">日
+                    <button id="calendarBtn" onClick="this.getRootNode().host.shadowRoot.querySelector('#calendar').classList.add('show')">📅</button>
                 </div>
 
-                <!-- 月表示の部分 -->
-                <div class="month-container">
-                    ${this.generateMonth()}
+                <!-- ➁カレンダー部分 -->
+                <div id="calendar" class="modal">
+
+                    <!-- ヘッダー -->
+                    <div class="calendar-header">
+                        <button id="closeModal" class="close" onClick="this.getRootNode().host.shadowRoot.querySelector('#calendar').classList.remove('show')">×</button>
+                        <button id="prev-year" onClick="this.getRootNode().host.changeYear(-1)"> < </button>
+                        <span id="current-year">${this.year}</span>
+                        <button id="next-year" onClick="this.getRootNode().host.changeYear(1)"> > </button>
+                        <button id="checkModal" class="check">✔</button>
+                    </div>
+
+                    <!-- 月表示の部分 -->
+                    <div class="month-container">
+                        ${this.generateMonth()}
+                    </div>
+
+                    <!-- 曜日表示の部分 -->
+                    <div class="weekdays">
+                        <span style="color: red"> sun </span>
+                        <span> mon </span>
+                        <span> tue </span>
+                        <span> wed </span>
+                        <span> thu </span>
+                        <span> fri </span>
+                        <span style="color: blue"> sat </span>
+                    </div>
+
+                    <!-- 日付表示の部分 -->
+                    <div class="days-grid">
+                        ${this.generateDayGrid(this.year, this.month)}
+                    </div>
+
+                    <!-- ➂年をスクロールで選択する部分 -->
+                    <div id="year-modal" class="modal"></div>
+
                 </div>
-
-                <!-- 曜日表示の部分 -->
-                <div class="weekdays">
-                    <span style="color: red"> sun </span>
-                    <span> mon </span>
-                    <span> tue </span>
-                    <span> wed </span>
-                    <span> thu </span>
-                    <span> fri </span>
-                    <span style="color: blue"> sat </span>
-                </div>
-
-                <!-- 日付表示の部分 -->
-                <div class="days-grid">
-                    ${this.generateDayGrid(this.year, this.month)}
-                </div>
-
-                <!-- ➂年をスクロールで選択する部分 -->
-                <div id="year-modal" class="modal"></div>
-
             </div>
             `;
     }
