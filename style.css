@@ -5,16 +5,16 @@
 }
 
 
-
 :host {
     display: block;
 }
 
+/* アプリの大枠部分(基準値として使用) */
 #app-container {
     position: relative;
 }
 
-/* ①日付を入力する部分 */
+/* ➀日付を入力する部分 */
 .date-picker {
     display: flex;
     align-items: flex-end;
@@ -39,7 +39,7 @@
     }
 }
 
-/* ②カレンダーの部分 */
+/* ➁カレンダーの部分 */
 #calendar {
     border: 3px solid var(--theme-color);
     padding: 0;
@@ -114,10 +114,6 @@
                 height: 30px;
             }
         }
-
-            
-
-        
     }
 
     /* 曜日の部分 */
@@ -172,10 +168,23 @@
             }
         }
     }
+
+    /* ➂年選択部分 */
+    #year-modal {
+        .year {
+            display: block;
+        }
+
+        input[type="radio"] {
+            display: none;
+
+        }
+    }
 }
 
 
 
+/* ボタンなどで画面に表示されるもののスタイル */
 .modal {
     display: none;
     position: absolute;

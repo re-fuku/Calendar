@@ -6,7 +6,7 @@ class MyCalendar extends HTMLElement {
         super(); // HTMLElementの初期化
         this.attachShadow({mode: 'open'}); // Shadow DOMの作成
         const today = new Date(); // 今日の日付
-        this.year = today.getFullYear(); // 現在の都市
+        this.year = today.getFullYear(); // 現在の年
         this.month = today.getMonth() + 1; // 現在の月(0~11なので+1)
         this.day = today.getDate(); // 現在の日
     }
@@ -55,6 +55,24 @@ class MyCalendar extends HTMLElement {
 
         return html;
     }
+
+    // 年の選択部分を作成する
+    generateYearSelect() {
+        let html = '';
+
+        for(let year = this.year - 3; year < this.year + 3; year++) {
+            const checked = year === this.year ? 'checked' : '';
+            html += 
+                `<label class="year">
+                    <input type="radio" name="select_year" value="${year}" ${checked}}>
+                    <span class="year-number">${year}</span>
+                </label>
+            `;
+        }
+
+        return html;
+    }
+
 
     // 月のラジオボタンにイベントを追加
     setUpMonthListeners() {
@@ -118,6 +136,7 @@ class MyCalendar extends HTMLElement {
         this.shadowRoot.innerHTML = `
             <link rel="stylesheet" href="style.css">
 
+            <!-- アプリの大枠の部分(基準値) -->
             <div id="app-container">
                 <!-- ➀日付入力部分 -->
                 <div class="date-picker">
@@ -161,7 +180,9 @@ class MyCalendar extends HTMLElement {
                     </div>
 
                     <!-- ➂年をスクロールで選択する部分 -->
-                    <div id="year-modal" class="modal"></div>
+                    <div id="year-modal" class="modal show">
+                        ${this.generateYearSelect()}
+                    </div>
 
                 </div>
             </div>
