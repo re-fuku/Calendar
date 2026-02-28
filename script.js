@@ -123,15 +123,15 @@ class MyCalendar extends HTMLElement {
                 <input type="number" id="input-year" value="${this.year}">年
                 <input type="number" id="input-month" value="${this.month}">月
                 <input type="number" id="input-day" value="${this.day}">日
-                <button id="calendarBtn">📅</button>
+                <button id="calendarBtn" onClick="this.getRootNode().host.shadowRoot.querySelector('#calendar').classList.add('show')">📅</button>
             </div>
 
             <!-- ➁カレンダー部分 -->
-            <div id="calendar" class="modal show">
+            <div id="calendar" class="modal">
 
                 <!-- ヘッダー -->
                 <div class="calendar-header">
-                    <button id="closeModal" class="close">×</button>
+                    <button id="closeModal" class="close" onClick="this.getRootNode().host.shadowRoot.querySelector('#calendar').classList.remove('show')">×</button>
                     <button id="prev-year" onClick="this.getRootNode().host.changeYear(-1)"> < </button>
                     <span id="current-year">${this.year}</span>
                     <button id="next-year" onClick="this.getRootNode().host.changeYear(1)"> > </button>
