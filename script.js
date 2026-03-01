@@ -62,9 +62,10 @@ class MyCalendar extends HTMLElement {
 
         for(let year = this.year - 3; year < this.year + 3; year++) {
             const checked = year === this.year ? 'checked' : '';
+
             html += 
                 `<label class="year">
-                    <input type="radio" name="select_year" value="${year}" ${checked}}>
+                    <input type="radio" name="select_year" value="${year}" ${checked}>
                     <span class="year-number">${year}</span>
                 </label>
             `;
@@ -118,6 +119,7 @@ class MyCalendar extends HTMLElement {
     connectedCallback() {
         this.render();
         this.setUpMonthListeners();
+        this.setUpEventListeners();
 
         const value = this.getAttribute('value');
         if (value) {
@@ -131,10 +133,41 @@ class MyCalendar extends HTMLElement {
         }
     }
 
+    setUpEventListeners() {
+
+        // カレンダーアイコンをクリックした際の処理
+        this.shadowRoot.querySelector('#calendarBtn').addEventListener('click', () => {
+            this.shadowRoot.querySelector('#calendar').classList.add('show');
+        });
+
+        // カレンダーの[×]ボタンをクリックした際の処理
+        this.shadowRoot.querySelector('#closeModal').addEventListener('click', () => {
+            this.shadowRoot.querySelector('#calendar').classList.remove('show');
+        });
+
+        // カレンダーの[<]ボタンををクリックした際の処理
+        this.shadowRoot.querySelector('#prev-year').addEventListener('click', () => {
+            this.changeYear(-1);
+        });
+
+        // カレンダーの[>]ボタンををクリックした際の処理
+        this.shadowRoot.querySelector('#next-year').addEventListener('click', () => {
+            this.changeYear(1);
+        });
+
+        // カレンダーの年をクリックした際の処理
+        this.shadowRoot.querySelector('#current-year').addEventListener('click', (e) => {
+            this.shadowRoot.querySelector('#year-modal').classList.add('show');
+        });
+    }
+
     // カレンダー全体のHTMLを生成してShadow DOMに描画する
     render() {
         this.shadowRoot.innerHTML = `
             <link rel="stylesheet" href="style.css">
+
+            <!-- shadow DOMのルートを取得し定義する -->
+            <script>window.shRoot = document.currentScript.getRootNode();</script>
 
             <!-- アプリの大枠の部分(基準値) -->
             <div id="app-container">
@@ -143,7 +176,7 @@ class MyCalendar extends HTMLElement {
                     <input type="number" id="input-year" value="${this.year}">年
                     <input type="number" id="input-month" value="${this.month}">月
                     <input type="number" id="input-day" value="${this.day}">日
-                    <button id="calendarBtn" onClick="this.getRootNode().host.shadowRoot.querySelector('#calendar').classList.add('show')">📅</button>
+                    <button id="calendarBtn">📅</button>
                 </div>
 
                 <!-- ➁カレンダー部分 -->
@@ -151,10 +184,10 @@ class MyCalendar extends HTMLElement {
 
                     <!-- ヘッダー -->
                     <div class="calendar-header">
-                        <button id="closeModal" class="close" onClick="this.getRootNode().host.shadowRoot.querySelector('#calendar').classList.remove('show')">×</button>
-                        <button id="prev-year" onClick="this.getRootNode().host.changeYear(-1)"> < </button>
+                        <button id="closeModal" class="close">×</button>
+                        <button id="prev-year"> < </button>
                         <span id="current-year">${this.year}</span>
-                        <button id="next-year" onClick="this.getRootNode().host.changeYear(1)"> > </button>
+                        <button id="next-year"> > </button>
                         <button id="checkModal" class="check">✔</button>
                     </div>
 
@@ -180,7 +213,7 @@ class MyCalendar extends HTMLElement {
                     </div>
 
                     <!-- ➂年をスクロールで選択する部分 -->
-                    <div id="year-modal" class="modal show">
+                    <div id="year-modal" class="modal">
                         ${this.generateYearSelect()}
                     </div>
 

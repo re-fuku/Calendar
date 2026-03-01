@@ -171,13 +171,35 @@
 
     /* ➂年選択部分 */
     #year-modal {
+        padding: 0;
+        background-color: var(--theme-color);
+        color: var(--ft-color);
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+
         .year {
-            display: block;
-        }
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            font-size: 2rem;
 
-        input[type="radio"] {
-            display: none;
+            input[type="radio"] {
+                display: none;
 
+            }
+
+            &:has(input:checked) {
+                background-color: var(--active-color);
+            }
+
+            .year-number {
+                font-weight: bold;
+
+            }
         }
     }
 }
