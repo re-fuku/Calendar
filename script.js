@@ -142,6 +142,7 @@ class MyCalendar extends HTMLElement {
         // カレンダーアイコンをクリックした際の処理
         this.shadowRoot.querySelector('#calendarBtn').addEventListener('click', () => {
             this.shadowRoot.querySelector('#calendar').classList.add('show');
+            this.shadowRoot.querySelector('#calendar').focus();
         });
 
         // ------------------------------------ //
