@@ -154,7 +154,24 @@ class MyCalendar extends HTMLElement {
             this.shadowRoot.querySelector('#year-modal').classList.add('show');
         });
 
-        // カレンダーの月のラジオボタンの処理(再利用するため関数で定義)
+        // カレンダーの月部分でキー入力した際の処理
+        this.shadowRoot.querySelector('.month-container').addEventListener('keydown',(e) => {  
+            e.preventDefault(); // ブラウザの標準動作を止める(ページの上下左右など)
+
+            switch(e.key) {
+                case 'ArrowLeft':
+                    this.month = this.month > 1 ? this.month - 1 : this.month;
+                    break;
+                case 'ArrowRight':
+                    this.month = this.month < 12 ? this.month + 1 : this.month;
+                    break;
+            }
+
+            this.shadowRoot.querySelector(`input[name="select_month"][value="${this.month}"]`).checked = true; // 月のラジオボタンを更新
+            this.updateCalendar(); // カレンダーを更新
+        })
+
+        // カレンダーの月のラジオボタンの処理
         this.shadowRoot.querySelectorAll('input[name="select_month"]').forEach(radio => {
             radio.addEventListener('change', (e) => {
                 this.month = parseInt(e.target.value);
@@ -162,34 +179,26 @@ class MyCalendar extends HTMLElement {
             })
         })
 
-        // カレンダーの月のラジオボタン
-
         // カレンダーの日付のラジオボタンの処理(再利用するため関数で定義)
         this.setUpDayListeners();
 
-        // キー入力をした際の処理
+        // カレンダーの日付部分でキー入力をした際の処理
         this.shadowRoot.querySelector('.days-grid').addEventListener('keydown', (e) => {
 
-            // ➁カレンダーが表示されていない場合は何もしない
-            if (!this.shadowRoot.querySelector('#calendar').classList.contains('show')) return;
-
             const daysInMonth = new Date(this.year, this.month, 0).getDate(); // その月の日数
-
+            e.preventDefault(); // ブラウザの標準動作を止める(ページの上下左右など)
+            
             switch (e.key) {
                 case 'ArrowLeft':
-                    e.preventDefault();
                     this.day = this.day > 1 ? this.day - 1 : this.day;
                     break;
                 case 'ArrowRight':
-                    e.preventDefault();
                     this.day = this.day < daysInMonth ? this.day + 1 : this.day;
                     break;
                 case 'ArrowUp':
-                    e.preventDefault();
                     this.day = this.day > 7 ? this.day - 7 : 1;
                     break;
                 case 'ArrowDown':
-                    e.preventDefault();
                     this.day = this.day <= daysInMonth - 7 ? this.day + 7 : this.day;
                     break;
             }
@@ -260,7 +269,7 @@ class MyCalendar extends HTMLElement {
                     </div>
 
                     <!-- 日付表示の部分 -->
-                    <div class="days-grid focusable" tabindex="0">
+                    <div class="days-grid focusable" tabindex="1">
                         ${this.generateDayGrid(this.year, this.month)}
                     </div>
 
