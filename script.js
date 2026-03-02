@@ -1,22 +1,25 @@
 
 class MyCalendar extends HTMLElement {
+    // フィールド
+    today = new Date(); // 今日の日付
+    tmpYear = this.today.getFullYear(); // 年を一時保存
+    tmpMonth = this.today.getMonth() + 1; // 月を一時保存
+    tmpDay = this.today.getDate(); // 日を一時保存
 
     // コンストラクタ
     constructor() {
         super(); // HTMLElementの初期化
         this.attachShadow({mode: 'open'}); // Shadow DOMの作成
-        const today = new Date(); // 今日の日付
-        this.year = today.getFullYear(); // 現在の年
-        this.month = today.getMonth() + 1; // 現在の月(0~11なので+1)
-        this.day = today.getDate(); // 現在の日
     }
+
+    
 
     // カレンダーの月部分を作成する
     generateMonth() {
         let html = '';
 
         for (let month = 1; month <= 12; month++) {
-            const checked = month === this.month ? 'checked' : '';
+            const checked = month === this.tmpMonth ? 'checked' : '';
             html += 
                 `<label class="month">
                     <input type="radio" name="select_month" value="${month}" ${checked}>
@@ -42,7 +45,7 @@ class MyCalendar extends HTMLElement {
 
         // 日付を追加
         for (let day = 1; day <= daysInMonth; day++) {
-            const checked = day === this.day ? 'checked' : '';
+            const checked = day === this.tmpDay ? 'checked' : '';
 
             html += 
                 `<label class="day">
@@ -60,8 +63,8 @@ class MyCalendar extends HTMLElement {
     generateYearSelect() {
         let html = '';
 
-        for(let year = this.year - 3; year < this.year + 3; year++) {
-            const checked = year === this.year ? 'checked' : '';
+        for(let year = this.tmpYear - 3; year < this.tmpYear + 3; year++) {
+            const checked = year === this.tmpYear ? 'checked' : '';
 
             html += 
                 `<label class="year">
@@ -77,7 +80,7 @@ class MyCalendar extends HTMLElement {
     // カレンダーを更新する
     updateCalendar() {
         const daysGrid = this.shadowRoot.querySelector('.days-grid');
-        daysGrid.innerHTML = this.generateDayGrid(this.year, this.month); // 日付を作成しなおす
+        daysGrid.innerHTML = this.generateDayGrid(this.tmpYear, this.tmpMonth); // 日付を作成しなおす
         
         this.setUpDayListeners() // 日付のラジオボタンを再設定しなおす
     }
@@ -88,15 +91,15 @@ class MyCalendar extends HTMLElement {
 
         dayRadios.forEach(radio => {
             radio.addEventListener('change', (e) => {
-                this.day = parseInt(e.target.value);
+                this.tmpDay = parseInt(e.target.value);
             })
         })
     }
 
     // 年を増減する関数
     changeYear(value) {
-        this.year += value;
-        this.shadowRoot.querySelector('#current-year').textContent = this.year;
+        this.tmpYear += value;
+        this.shadowRoot.querySelector('#current-year').textContent = this.tmpYear;
         this.updateCalendar();
     }
 
@@ -106,16 +109,10 @@ class MyCalendar extends HTMLElement {
         this.render();
         this.setUpEventListeners();
 
-        const value = this.getAttribute('value');
-        if (value) {
-            const [y, m, d] = value.split('-');
-            this.shadowRoot.querySelector('#input-year').value = y;
-            this.shadowRoot.querySelector('#input-month').value = parseInt(m);
-            this.shadowRoot.querySelector('#input-day').value = parseInt(d);
-            this.year = parseInt(y); //確認必要
-            this.month = parseInt(m);
-            this.day = parseInt(d);
-        }
+        // #day-pickerに初期値を設定
+        this.shadowRoot.querySelector('#input-year').value = parseInt(this.tmpYear);
+        this.shadowRoot.querySelector('#input-month').value = parseInt(this.tmpMonth);
+        this.shadowRoot.querySelector('#input-day').value = parseInt(this.tmpDay);
     }
 
     // イベントを作成する関数
@@ -150,9 +147,20 @@ class MyCalendar extends HTMLElement {
         });
 
         // カレンダーの年の部分をクリックした際の処理
-        this.shadowRoot.querySelector('#current-year').addEventListener('click', (e) => {
+        this.shadowRoot.querySelector('#current-year').addEventListener('click', () => {
             this.shadowRoot.querySelector('#year-modal').classList.add('show');
         });
+
+        // カレンダーの✔がクリックされた際の処理
+        this.shadowRoot.querySelector('#checkModal').addEventListener('click',() => {
+            // "day-picker"のinputにそれぞれ値を登録する
+            this.shadowRoot.querySelector('#input-year').value = this.tmpYear;
+            this.shadowRoot.querySelector('#input-month').value = this.tmpMonth;
+            this.shadowRoot.querySelector('#input-day').value = this.tmpDay;
+
+            // ➁カレンダーを閉じる
+            this.shadowRoot.querySelector('#calendar').classList.remove('show')
+        })
 
         // カレンダーの月部分でキー入力した際の処理
         this.shadowRoot.querySelector('.month-container').addEventListener('keydown',(e) => {  
@@ -160,21 +168,21 @@ class MyCalendar extends HTMLElement {
 
             switch(e.key) {
                 case 'ArrowLeft':
-                    this.month = this.month > 1 ? this.month - 1 : this.month;
+                    this.tmpMonth = this.tmpMonth > 1 ? this.tmpMonth - 1 : this.tmpMonth;
                     break;
                 case 'ArrowRight':
-                    this.month = this.month < 12 ? this.month + 1 : this.month;
+                    this.tmpMonth = this.tmpMonth < 12 ? this.tmpMonth + 1 : this.tmpMonth;
                     break;
             }
 
-            this.shadowRoot.querySelector(`input[name="select_month"][value="${this.month}"]`).checked = true; // 月のラジオボタンを更新
+            this.shadowRoot.querySelector(`input[name="select_month"][value="${this.tmpMonth}"]`).checked = true; // 月のラジオボタンを更新
             this.updateCalendar(); // カレンダーを更新
         })
 
         // カレンダーの月のラジオボタンの処理
         this.shadowRoot.querySelectorAll('input[name="select_month"]').forEach(radio => {
             radio.addEventListener('change', (e) => {
-                this.month = parseInt(e.target.value);
+                this.tmpMonth = parseInt(e.target.value);
                 this.updateCalendar();
             })
         })
@@ -185,21 +193,21 @@ class MyCalendar extends HTMLElement {
         // カレンダーの日付部分でキー入力をした際の処理
         this.shadowRoot.querySelector('.days-grid').addEventListener('keydown', (e) => {
 
-            const daysInMonth = new Date(this.year, this.month, 0).getDate(); // その月の日数
+            const daysInMonth = new Date(this.tmpYear, this.tmpMonth, 0).getDate(); // その月の日数
             e.preventDefault(); // ブラウザの標準動作を止める(ページの上下左右など)
             
             switch (e.key) {
                 case 'ArrowLeft':
-                    this.day = this.day > 1 ? this.day - 1 : this.day;
+                    this.tmpDay = this.tmpDay > 1 ? this.tmpDay - 1 : this.tmpDay;
                     break;
                 case 'ArrowRight':
-                    this.day = this.day < daysInMonth ? this.day + 1 : this.day;
+                    this.tmpDay = this.tmpDay < daysInMonth ? this.tmpDay + 1 : this.tmpDay;
                     break;
                 case 'ArrowUp':
-                    this.day = this.day > 7 ? this.day - 7 : 1;
+                    this.tmpDay = this.tmpDay > 7 ? this.tmpDay - 7 : 1;
                     break;
                 case 'ArrowDown':
-                    this.day = this.day <= daysInMonth - 7 ? this.day + 7 : this.day;
+                    this.tmpDay = this.tmpDay <= daysInMonth - 7 ? this.tmpDay + 7 : this.tmpDay;
                     break;
             }
 
@@ -213,8 +221,8 @@ class MyCalendar extends HTMLElement {
         // 年を選択するラジオボタンを選択した際の処理
         this.shadowRoot.querySelectorAll('input[name="select_year').forEach(radio => {
             radio.addEventListener('change', (e) => {
-                this.year = parseInt(e.target.value);
-                this.shadowRoot.querySelector('#current-year').textContent = this.year;
+                this.tmpYear = parseInt(e.target.value);
+                this.shadowRoot.querySelector('#current-year').textContent = this.tmpYear;
                 this.shadowRoot.querySelector('#year-modal').classList.remove('show');
                 this.updateCalendar();
             })
@@ -234,9 +242,9 @@ class MyCalendar extends HTMLElement {
             <div id="app-container">
                 <!-- ➀日付入力部分 -->
                 <div class="date-picker">
-                    <input type="number" id="input-year" value="${this.year}">年
-                    <input type="number" id="input-month" value="${this.month}">月
-                    <input type="number" id="input-day" value="${this.day}">日
+                    <input type="number" id="input-year" value="0">年
+                    <input type="number" id="input-month" value="0">月
+                    <input type="number" id="input-day" value="0">日
                     <button id="calendarBtn">📅</button>
                 </div>
 
@@ -247,7 +255,7 @@ class MyCalendar extends HTMLElement {
                     <div class="calendar-header">
                         <button id="closeModal" class="close">×</button>
                         <button id="prev-year"> < </button>
-                        <span id="current-year">${this.year}</span>
+                        <span id="current-year">${this.tmpYear}</span>
                         <button id="next-year"> > </button>
                         <button id="checkModal" class="check">✔</button>
                     </div>
@@ -270,7 +278,7 @@ class MyCalendar extends HTMLElement {
 
                     <!-- 日付表示の部分 -->
                     <div class="days-grid focusable" tabindex="1">
-                        ${this.generateDayGrid(this.year, this.month)}
+                        ${this.generateDayGrid(this.tmpYear, this.tmpMonth)}
                     </div>
 
                     <!-- ➂年をスクロールで選択する部分 -->
