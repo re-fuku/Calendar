@@ -74,20 +74,6 @@ class MyCalendar extends HTMLElement {
         return html;
     }
 
-
-    // 月のラジオボタンにイベントを追加
-    setUpMonthListeners() {
-        const monthRadios = this.shadowRoot.querySelectorAll('input[name="select_month"]');
-
-        monthRadios.forEach(radio => {
-            // "select_month"内のラジオボタンに'change'イベント付与
-            radio.addEventListener('change', (e) => {
-                this.month = parseInt(e.target.value); // 月の値をラジオボタンのvalueで変更
-                this.updateCalendar(); // カレンダーを更新する
-            })
-        })
-    }
-
     // カレンダーを更新する
     updateCalendar() {
         const daysGrid = this.shadowRoot.querySelector('.days-grid');
@@ -118,7 +104,6 @@ class MyCalendar extends HTMLElement {
     // 要素がDOMに追加されたときに自動実行される初期化処理
     connectedCallback() {
         this.render();
-        this.setUpMonthListeners();
         this.setUpEventListeners();
 
         const value = this.getAttribute('value');
@@ -170,7 +155,14 @@ class MyCalendar extends HTMLElement {
         });
 
         // カレンダーの月のラジオボタンの処理(再利用するため関数で定義)
-        this.setUpMonthListeners();
+        this.shadowRoot.querySelectorAll('input[name="select_month"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                this.month = parseInt(e.target.value);
+                this.updateCalendar();
+            })
+        })
+
+        // カレンダーの月のラジオボタン
 
         // カレンダーの日付のラジオボタンの処理(再利用するため関数で定義)
         this.setUpDayListeners();
