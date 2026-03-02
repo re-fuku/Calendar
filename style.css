@@ -133,6 +133,10 @@
         }
     }
 
+    &:has(.days-grid:focus) .weekdays {
+
+    }
+
     /* 日付の大枠部分 */
     .days-grid {
         display: grid;

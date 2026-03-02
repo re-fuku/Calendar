@@ -88,7 +88,7 @@ class MyCalendar extends HTMLElement {
         })
     }
 
-    // 月が変更されたら日付部分を更新する
+    // カレンダーを更新する
     updateCalendar() {
         const daysGrid = this.shadowRoot.querySelector('.days-grid');
         daysGrid.innerHTML = this.generateDayGrid(this.year, this.month); // 日付を作成しなおす
@@ -142,7 +142,7 @@ class MyCalendar extends HTMLElement {
         // カレンダーアイコンをクリックした際の処理
         this.shadowRoot.querySelector('#calendarBtn').addEventListener('click', () => {
             this.shadowRoot.querySelector('#calendar').classList.add('show');
-            this.shadowRoot.querySelector('#calendar').focus();
+            this.shadowRoot.querySelector('.days-grid').focus();
         });
 
         // ------------------------------------ //
@@ -169,9 +169,16 @@ class MyCalendar extends HTMLElement {
             this.shadowRoot.querySelector('#year-modal').classList.add('show');
         });
 
-        // キー入力をした際の処理
-        this.shadowRoot.querySelector('#calendar').addEventListener('keydown', (e) => {
+        // カレンダーの月のラジオボタンの処理(再利用するため関数で定義)
+        this.setUpMonthListeners();
 
+        // カレンダーの日付のラジオボタンの処理(再利用するため関数で定義)
+        this.setUpDayListeners();
+
+        // キー入力をした際の処理
+        this.shadowRoot.querySelector('.days-grid').addEventListener('keydown', (e) => {
+
+            // ➁カレンダーが表示されていない場合は何もしない
             if (!this.shadowRoot.querySelector('#calendar').classList.contains('show')) return;
 
             const daysInMonth = new Date(this.year, this.month, 0).getDate(); // その月の日数
@@ -233,7 +240,7 @@ class MyCalendar extends HTMLElement {
                 </div>
 
                 <!-- ➁カレンダー部分 -->
-                <div id="calendar" class="modal" tabindex="0">
+                <div id="calendar" class="modal">
 
                     <!-- ヘッダー -->
                     <div class="calendar-header">
@@ -245,7 +252,7 @@ class MyCalendar extends HTMLElement {
                     </div>
 
                     <!-- 月表示の部分 -->
-                    <div class="month-container">
+                    <div class="month-container focusable" tabIndex="0">
                         ${this.generateMonth()}
                     </div>
 
@@ -261,7 +268,7 @@ class MyCalendar extends HTMLElement {
                     </div>
 
                     <!-- 日付表示の部分 -->
-                    <div class="days-grid">
+                    <div class="days-grid focusable" tabindex="0">
                         ${this.generateDayGrid(this.year, this.month)}
                     </div>
 
