@@ -252,7 +252,7 @@ class MyCalendar extends HTMLElement {
                     <input type="number" id="input-year" value="0">年
                     <input type="number" id="input-month" value="0">月
                     <input type="number" id="input-day" value="0">日
-                    <button id="calendarBtn">📅</button>
+                    <button id="calendarBtn"></button>
                 </div>
 
                 <!-- ➁カレンダー部分 -->
@@ -260,11 +260,11 @@ class MyCalendar extends HTMLElement {
 
                     <!-- ヘッダー -->
                     <div class="calendar-header">
-                        <button id="closeModal" class="close">×</button>
-                        <button id="prev-year"> < </button>
+                        <button id="closeModal" class="close"></button>
+                        <button id="prev-year"></button>
                         <span id="current-year">${this.tmpYear}</span>
-                        <button id="next-year"> > </button>
-                        <button id="checkModal" class="check">✔</button>
+                        <button id="next-year"></button>
+                        <button id="checkModal" class="check"></button>
                     </div>
 
                     <!-- 月表示の部分 -->

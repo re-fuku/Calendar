@@ -37,6 +37,16 @@
     #input-month, #input-day {
         width: 20px;
     }
+
+    #calendarBtn {
+        width: 20px;
+        height: 20px;
+        background-color: var(--theme-color);
+        mask-repeat: no-repeat;
+        mask-image: url('./img/calender_0.png');
+        mask-size: cover;
+        mask-position: center;
+    }
 }
 
 /* ➁カレンダーの部分 */
@@ -66,16 +76,62 @@
             font-size: 24px;
         }
 
-        #checkModal, #closeModal {
+        #closeModal {
             border-radius: 50%;
             background-color: var(--ft-color);
-            color: var(--theme-color);
+            width: 30px;
+            height: 30px;
+            position: relative;
+
+            &::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                mask-image: url('./img/cross_0.png');
+                background-color: var(--theme-color);
+                mask-repeat: no-repeat;
+                mask-position: center;
+                mask-size: contain;
+            }
         }
 
-        #prev-Year, #next-Year {
-            background-color: transparent;
-            font-weight: bold;
-            color: var(--ft-color);
+        #checkModal {
+            border-radius: 50%;
+            background-color: var(--ft-color);
+            width: 30px;
+            height: 30px;
+            position: relative;
+
+            &::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                mask-image: url('./img/check_0.png');
+                background-color: var(--theme-color);
+                mask-repeat: no-repeat;
+                mask-position: center;
+                mask-size: contain;
+            }
+        }
+
+        #prev-year {
+            width: 30px;
+            height: 30px;
+            mask-image: url('./img/lt.png');
+            mask-repeat: no-repeat;
+            mask-position: center;
+            mask-size: contain;
+            background-color: var(--ft-color);
+        }
+        
+        #next-year {
+            width: 30px;
+            height: 30px;
+            mask-image: url('./img/gt.png');
+            mask-repeat: no-repeat;
+            mask-position: center;
+            mask-size: contain;
+            background-color: var(--ft-color);
         }
 
         #current-year {
