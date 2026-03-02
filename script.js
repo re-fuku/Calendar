@@ -12,8 +12,6 @@ class MyCalendar extends HTMLElement {
         this.attachShadow({mode: 'open'}); // Shadow DOMの作成
     }
 
-    
-
     // カレンダーの月部分を作成する
     generateMonth() {
         let html = '';
@@ -32,9 +30,9 @@ class MyCalendar extends HTMLElement {
     }
 
     // カレンダーの日付部分を作成する
-    generateDayGrid(year, month) {
-        const firstDay = new Date(year, month - 1, 1).getDay(); // 月の最初の曜日(0=sat)
-        const daysInMonth = new Date(year, month, 0).getDate(); // その月の日数
+    generateDayGrid() {
+        const firstDay = new Date(this.tmpYear, this.tmpMonth - 1, 1).getDay(); // 月の最初の曜日(0=sat)
+        const daysInMonth = new Date(this.tmpYear, this.tmpMonth, 0).getDate(); // その月の日数
 
         let html = '';
 
@@ -45,7 +43,7 @@ class MyCalendar extends HTMLElement {
 
         // 日付を追加
         for (let day = 1; day <= daysInMonth; day++) {
-            const checked = day === this.tmpDay ? 'checked' : '';
+            const checked = day === this.tmpDay? 'checked' : '';
 
             html += 
                 `<label class="day">
@@ -62,8 +60,10 @@ class MyCalendar extends HTMLElement {
     // 年の選択部分を作成する
     generateYearSelect() {
         let html = '';
+        const min = this.tmpYear - 3; // 作成する年の下限 
+        const max = this.tmpYear + 3; // 作成する年の上限
 
-        for(let year = this.tmpYear - 3; year < this.tmpYear + 3; year++) {
+        for(let year = min; year < max; year++) {
             const checked = year === this.tmpYear ? 'checked' : '';
 
             html += 
@@ -80,7 +80,14 @@ class MyCalendar extends HTMLElement {
     // カレンダーを更新する
     updateCalendar() {
         const daysGrid = this.shadowRoot.querySelector('.days-grid');
-        daysGrid.innerHTML = this.generateDayGrid(this.tmpYear, this.tmpMonth); // 日付を作成しなおす
+        const daysInMonth = new Date(this.tmpYear, this.tmpMonth, 0).getDate(); // その月の日数
+
+        // 既に選択されている日付が変更後の月の最大日付より大きかった場合
+        if (this.tmpDay > daysInMonth) {
+            this.tmpDay = daysInMonth;
+        }
+        
+        daysGrid.innerHTML = this.generateDayGrid(); // 日付を作成しなおす
         
         this.setUpDayListeners() // 日付のラジオボタンを再設定しなおす
     }
