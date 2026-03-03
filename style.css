@@ -23,12 +23,14 @@
         border: none;
         text-align: right;
         align-items: center;
+        font-size: 100%;
 
         /* <input type="number">内のスピンボタンの設定 */
         &::-webkit-inner-spin-button {
             display: none;
         }
     }
+
 
     #input-year {
         width: 40px;
@@ -55,6 +57,7 @@
     padding: 0;
     padding-bottom: 10px;
     width: 450px;
+    height: 370px;
     position: absolute;
     top: 0;
     left: 0;
@@ -76,6 +79,7 @@
             font-size: 24px;
         }
 
+        /* カレンダーを閉じる(×)のスタイル */
         #closeModal {
             border-radius: 50%;
             background-color: var(--ft-color);
@@ -95,6 +99,7 @@
             }
         }
 
+        /* カレンダーで設定した日付を確定する(✔)のスタイル */
         #checkModal {
             border-radius: 50%;
             background-color: var(--ft-color);
@@ -114,6 +119,7 @@
             }
         }
 
+        /* 年を減少させるボタン(<)のスタイル */
         #prev-year {
             width: 30px;
             height: 30px;
@@ -124,6 +130,7 @@
             background-color: var(--ft-color);
         }
         
+        /* 年を増加させる(>)のスタイル */
         #next-year {
             width: 30px;
             height: 30px;
@@ -134,6 +141,7 @@
             background-color: var(--ft-color);
         }
 
+        /* 現在選択されている年のスタイル */
         #current-year {
             color: var(--ft-color)
         }
@@ -168,6 +176,7 @@
                 border-radius: 8px;
                 width: 30px;
                 height: 30px;
+                transition: background-color 0.2s ease, color 0.2s ease;
             }
         }
     }
@@ -221,6 +230,7 @@
                 border-radius: 50%;
                 width: 40px;
                 height: 40px;
+                transition: background-color 0.2s ease, color 0.2s ease;
             }
         }
     }
@@ -281,6 +291,7 @@
 .focusable:focus {
     outline: none;
     box-shadow: inset 0 1px 2px rgba(0, 0, 0.3);
+    background-color: azure;
     transform: translateY(1px);
     transition: all 0.15s ease;
 }

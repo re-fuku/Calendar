@@ -60,8 +60,8 @@ class MyCalendar extends HTMLElement {
     // 年の選択部分を作成する
     generateYearSelect() {
         let html = '';
-        const min = this.tmpYear - 3; // 作成する年の下限 
-        const max = this.tmpYear + 3; // 作成する年の上限
+        const min = this.tmpYear - 4; // 作成する年の下限 
+        const max = this.tmpYear + 4; // 作成する年の上限
 
         for(let year = min; year < max; year++) {
             const checked = year === this.tmpYear ? 'checked' : '';
@@ -115,11 +115,6 @@ class MyCalendar extends HTMLElement {
     connectedCallback() {
         this.render();
         this.setUpEventListeners();
-
-        // #day-pickerに初期値を設定
-        this.shadowRoot.querySelector('#input-year').value = parseInt(this.tmpYear);
-        this.shadowRoot.querySelector('#input-month').value = parseInt(this.tmpMonth);
-        this.shadowRoot.querySelector('#input-day').value = parseInt(this.tmpDay);
     }
 
     // イベントを作成する関数
@@ -218,7 +213,7 @@ class MyCalendar extends HTMLElement {
                     break;
             }
 
-            this.updateCalendar();
+            this.shadowRoot.querySelector(`input[name="select_day"][value="${this.tmpDay}"]`).checked = true;
         })
 
         // ------------------------------------ //
@@ -249,9 +244,9 @@ class MyCalendar extends HTMLElement {
             <div id="app-container">
                 <!-- ➀日付入力部分 -->
                 <div class="date-picker">
-                    <input type="number" id="input-year" value="0">年
-                    <input type="number" id="input-month" value="0">月
-                    <input type="number" id="input-day" value="0">日
+                    <input type="number" id="input-year" value="${this.tmpYear}">年
+                    <input type="number" id="input-month" value="${this.tmpMonth}">月
+                    <input type="number" id="input-day" value="${this.tmpDay}">日
                     <button id="calendarBtn"></button>
                 </div>
 
