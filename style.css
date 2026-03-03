@@ -63,8 +63,8 @@ label, button {
     border: 3px solid var(--theme-color);
     padding: 0;
     padding-bottom: 10px;
-    width: 450px;
-    height: 370px;
+    max-width: 350px;
+    height: 300px;
     position: absolute;
     top: 0;
     left: 0;
@@ -158,9 +158,9 @@ label, button {
     .month-container {
         display: flex;
         justify-content: space-between;
-        margin: 0 5px;
+        margin: 0 2px;
         padding-top: 5px;
-        padding-bottom: 5px;
+        padding-bottom: -5px;
         border-bottom: 5px solid var(--theme-color);
 
         .month {
@@ -178,11 +178,11 @@ label, button {
             /* 月の数字部分 */
             .month-number {
                 display: flex;
-                align-items: center;
+                align-items: flex-end;
                 justify-content: center;
-                border-radius: 8px;
-                width: 30px;
-                height: 30px;
+                border-radius: 8px 8px 0 0;
+                width: 25px;
+                height: 25px;
                 transition: background-color 0.2s ease, color 0.2s ease;
             }
         }
@@ -237,8 +237,8 @@ label, button {
                 align-items: center;
                 justify-content: center;
                 border-radius: 50%;
-                width: 40px;
-                height: 40px;
+                width: 30px;
+                height: 30px;
                 transition: background-color 0.2s ease, color 0.2s ease;
             }
         }
@@ -260,7 +260,7 @@ label, button {
             justify-content: center;
             align-items: center;
             border-radius: 8px;
-            font-size: 2rem;
+            font-size: 1.6rem;
 
             input[type="radio"] {
                 display: none;
@@ -269,6 +269,10 @@ label, button {
 
             &:has(input:checked) {
                 background-color: var(--active-color);
+
+                &:hover {
+                    transform: none;
+                }
             }
 
             .year-number {
