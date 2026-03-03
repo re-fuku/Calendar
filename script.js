@@ -257,7 +257,7 @@ class MyCalendar extends HTMLElement {
                     <div class="calendar-header">
                         <button id="closeModal" class="close"></button>
                         <button id="prev-year"></button>
-                        <span id="current-year">${this.tmpYear}</span>
+                        <button id="current-year">${this.tmpYear}</button>
                         <button id="next-year"></button>
                         <button id="checkModal" class="check"></button>
                     </div>
