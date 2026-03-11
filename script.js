@@ -247,6 +247,8 @@ class MyCalendar extends HTMLElement {
                     this.tmpYear = this.tmpYear < this.maxYear ? this.tmpYear + 1 : this.tmpYear;
                     break;
                 case 'Enter':
+                    this.tmpYear = this.tmpYear;
+                    this.shadowRoot.querySelector('#current-year').textContent = this.tmpYear;
                     this.shadowRoot.querySelector('#year-modal').classList.remove('show');
 
                     // 年選択画面を閉じた後にすぐ時間を置かないと再度年選択画面を開くため調整する
