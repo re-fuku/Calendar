@@ -62,7 +62,6 @@ label, button {
 #calendar {
     border: 3px solid var(--theme-color);
     padding: 0;
-    padding-bottom: 10px;
     max-width: 350px;
     height: 300px;
     position: absolute;
@@ -84,6 +83,10 @@ label, button {
             color: var(--ft-color);
             margin: 5px;
             font-size: 24px;
+
+            &:focus {
+                outline: auto;
+            }
         }
 
         /* カレンダーを閉じる(×)のスタイル */
@@ -247,13 +250,17 @@ label, button {
     /* ➂年選択部分 */
     #year-modal {
         padding: 0;
-        background-color: var(--theme-color);
+        margin: 0;
+        /* background-color: var(--theme-color); */
+        background-color: aqua;
+        border: 3px solid var(--theme-color);
         color: var(--ft-color);
         width: 100%;
         height: 100%;
         position: absolute;
         top: 0;
         left: 0;
+        border-radius: 8px;
 
         .year {
             display: flex;
