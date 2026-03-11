@@ -110,9 +110,11 @@ class MyCalendar extends HTMLElement {
 
     // 年を増減する関数
     changeYear(value) {
-        this.tmpYear += value;
-        this.shadowRoot.querySelector('#current-year').textContent = this.tmpYear;
-        this.updateCalendar();
+        if ((value === -1 && this.tmpYear > this.minYear) || (value === 1 && this.tmpYear < this.maxYear)) {
+            this.tmpYear += value;
+            this.shadowRoot.querySelector('#current-year').textContent = this.tmpYear;
+            this.updateCalendar();
+        }
     }
 
 
