@@ -10,6 +10,10 @@ class MyCalendar extends HTMLElement {
     tmpDay = parseInt(this.value.split('-')[2]); // 日を一時保存
     minYear = parseInt(this.min.split('-')[0]); // 最小値の年
     maxYear = parseInt(this.max.split('-')[0]); // 最大値の年
+    minMonth = parseInt(this.min.split('-')[1]); // 最小値の月
+    maxMonth = parseInt(this.max.split('-')[1]); // 最大値の月
+    minDay = parseInt(this.min.split('-')[2]); // 最小値の日
+    maxDay = parseInt(this.max.split('-')[2]); // 最大値の日
     nextDay; // 次の日付
     nextMonth; // 次の月
 
@@ -25,9 +29,10 @@ class MyCalendar extends HTMLElement {
 
         for (let month = 1; month <= 12; month++) {
             const checked = month === this.tmpMonth ? 'checked' : '';
+            const disabled = this.isSelectableMonth(this.tmpYear, month) ? '' : 'disabled'; // 選択できない月はdisabledにする
             html += 
-                `<label class="month">
-                    <input type="radio" name="select_month" value="${month}" ${checked}>
+                `<label class="month ${disabled}">
+                    <input type="radio" name="select_month" value="${month}" ${checked} ${disabled}>
                     <span class="month-number">${month}</span>
                 </label>
             `;
@@ -51,10 +56,11 @@ class MyCalendar extends HTMLElement {
         // 日付を追加
         for (let day = 1; day <= daysInMonth; day++) {
             const checked = day === this.tmpDay? 'checked' : '';
+            const disabled = this.isSelectableDate(this.tmpYear, this.tmpMonth, day) ? '' : 'disabled'; // 選択できない日付はdisabledにする
 
             html += 
-                `<label class="day">
-                    <input type="radio" name="select_day" value="${day}" ${checked}>
+                `<label class="day ${disabled}">
+                    <input type="radio" name="select_day" value="${day}" ${checked} ${disabled}>
                     <span class="day-number">${day}</span>
                 </label>
             `;
@@ -84,6 +90,7 @@ class MyCalendar extends HTMLElement {
 
     // カレンダーを更新する
     updateCalendar() {
+        const monthContainer = this.shadowRoot.querySelector('.month-container');
         const daysGrid = this.shadowRoot.querySelector('.days-grid');
         const daysInMonth = new Date(this.tmpYear, this.tmpMonth, 0).getDate(); // その月の日数
 
@@ -92,25 +99,40 @@ class MyCalendar extends HTMLElement {
             this.tmpDay = daysInMonth;
         }
         
+
+        monthContainer.innerHTML = this.generateMonth(); // 月を作成しなおす
         daysGrid.innerHTML = this.generateDayGrid(); // 日付を作成しなおす
 
+        this.setUpMonthListeners(); // 月のラジオボタンにイベントを追加しなおす
         this.setUpDayListeners(); // 日付のラジオボタンにイベントを追加しなおす
     }
 
     // 日付のラジオボタンにイベントを追加
     setUpDayListeners() {
         const dayRadios = this.shadowRoot.querySelectorAll('input[name="select_day"]');
-
+        
         dayRadios.forEach(radio => {
             radio.addEventListener('click', (e) => {
                 this.nextDay = parseInt(e.target.value);
 
                 if (this.isSelectableDate(this.tmpYear, this.tmpMonth, this.nextDay)) {
                     this.tmpDay = this.nextDay;
-                } else {
-                    // 選択できない日付を選択しようとしたときにラジオボタンが動作しないようにする
-                    e.preventDefault();
+                } 
+            })
+        })
+    }
+
+    // 月のラジオボタンにイベントを追加
+    setUpMonthListeners() {
+        this.shadowRoot.querySelectorAll('input[name="select_month"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                this.nextMonth = parseInt(e.target.value);
+
+                if (this.isSelectableMonth(this.tmpYear, this.nextMonth)) {
+                    this.tmpMonth = this.nextMonth;
                 }
+
+                this.updateCalendar();
             })
         })
     }
@@ -133,9 +155,19 @@ class MyCalendar extends HTMLElement {
 
     // 選択しようとした日付が選択できるか判定する関数
     isSelectableDate(year, month, day) {
-        const selectDate = year + '-' + String(month).padStart(2, '0') + '-' + String(day).padStart(2, '0');
-        const flg = this.min <= selectDate && selectDate <= this.max; // 選択しようとした日付がmin以上max以下か
-    
+        const selectDate = new Date(year, month - 1, day);
+        const flg = new Date(this.min) <= selectDate && selectDate <= new Date(this.max); // 選択しようとした日付がmin以上max以下か
+        
+        return flg;
+    }
+
+    // 選択しようとした月が選択できるか判定する関数
+    isSelectableMonth(year, month) {
+        const ym = year * 100 + month;
+        const minYm = this.minYear * 100 + this.minMonth;
+        const maxYm = this.maxYear * 100 + this.maxMonth;
+        const flg = minYm <= ym && ym <= maxYm; // 選択しようとした年月がmin以上max以下か
+
         return flg;
     }
 
@@ -191,38 +223,32 @@ class MyCalendar extends HTMLElement {
         this.shadowRoot.querySelector('.month-container').addEventListener('keydown',(e) => {  
             switch(e.key) {
                 case 'ArrowLeft':
-                    this.tmpMonth = this.tmpMonth > 1 ? this.tmpMonth - 1 : this.tmpMonth;
+                    this.nextMonth = this.tmpMonth > 1 ? this.tmpMonth - 1 : this.tmpMonth;
                     break;
                 case 'ArrowRight':
-                    this.tmpMonth = this.tmpMonth < 12 ? this.tmpMonth + 1 : this.tmpMonth;
+                    this.nextMonth = this.tmpMonth < 12 ? this.tmpMonth + 1 : this.tmpMonth;
                     break;
+            }
+
+            if (this.isSelectableMonth(this.tmpYear, this.nextMonth)) {
+                this.tmpMonth = this.nextMonth;
             }
 
             this.shadowRoot.querySelector(`input[name="select_month"][value="${this.tmpMonth}"]`).checked = true; // 月のラジオボタンを更新
             this.updateCalendar(); // カレンダーを更新
         })
 
-        // カレンダーの月のラジオボタンの処理
-        this.shadowRoot.querySelectorAll('input[name="select_month"]').forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                this.tmpMonth = parseInt(e.target.value);
-                this.updateCalendar();
-            })
-        })
+        // カレンダーの月のラジオボタンをクリックした際の処理
+        this.setUpMonthListeners();
 
         // カレンダーの日付部分をクリックした際の処理
-        this.shadowRoot.querySelectorAll('input[name="select_day"]').forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                console.log(e.target.value);
-                this.tmpDay = parseInt(e.target.value);
-            })
-        })
+        this.setUpDayListeners();
+
 
         // カレンダーの日付部分でキー入力をした際の処理
         this.shadowRoot.querySelector('.days-grid').addEventListener('keydown', (e) => {
 
             const daysInMonth = new Date(this.tmpYear, this.tmpMonth, 0).getDate(); // その月の日数
-            
             switch (e.key) {
                 case 'ArrowLeft':
                     this.nextDay = this.tmpDay > 1 ? this.tmpDay - 1 : this.tmpDay;

@@ -315,3 +315,8 @@ label, button {
     background-color: azure;
     transition: all 0.15s ease;
 }
+
+/* 選択できない場合のスタイル */
+.disabled {
+    background-color: whitesmoke;
+}
