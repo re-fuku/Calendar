@@ -92,6 +92,8 @@ class MyCalendar extends HTMLElement {
     updateCalendar() {
         const monthContainer = this.shadowRoot.querySelector('.month-container');
         const daysGrid = this.shadowRoot.querySelector('.days-grid');
+
+        this.isOutOfRange(); // 現在の選択範囲が指定範囲外だった場合は調整する
         const daysInMonth = new Date(this.tmpYear, this.tmpMonth, 0).getDate(); // その月の日数
 
         // 既に選択されている日付が変更後の月の最大日付より大きかった場合
@@ -112,7 +114,7 @@ class MyCalendar extends HTMLElement {
         const dayRadios = this.shadowRoot.querySelectorAll('input[name="select_day"]');
         
         dayRadios.forEach(radio => {
-            radio.addEventListener('click', (e) => {
+            radio.addEventListener('change', (e) => {
                 this.nextDay = parseInt(e.target.value);
 
                 if (this.isSelectableDate(this.tmpYear, this.tmpMonth, this.nextDay)) {
@@ -169,6 +171,22 @@ class MyCalendar extends HTMLElement {
         const flg = minYm <= ym && ym <= maxYm; // 選択しようとした年月がmin以上max以下か
 
         return flg;
+    }
+
+    // 現在の選択範囲が指定範囲外だった時の処理
+    isOutOfRange() {
+        const selectDate = new Date(this.tmpYear, this.tmpMonth - 1, this.tmpDay);
+        
+        // 選択されている日付がminより前だった場合はmin, maxより後だった場合はmaxを選択する
+        if (selectDate < new Date(this.min)) {
+            this.tmpYear = this.minYear;
+            this.tmpMonth = this.minMonth;
+            this.tmpDay = this.minDay;
+        } else if (selectDate > new Date(this.max)) {
+            this.tmpYear = this.maxYear;
+            this.tmpMonth = this.maxMonth;
+            this.tmpDay = this.maxDay;
+        }
     }
 
     // イベントを作成する関数
